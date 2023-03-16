@@ -1,21 +1,19 @@
 import { component$ } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
-import { z, zod$ } from '@builder.io/qwik-city';
-import { globalAction$, Form } from '@builder.io/qwik-city';
+import { globalAction$, Form, zod$, z } from '@builder.io/qwik-city';
 import { parse } from 'cookie';
-import { signin } from '../../lib/auth/firebase';
+import { register } from '../../lib/auth/firebase';
 
-export const useLogin = globalAction$(
-    async (formData, { redirect, cookie }) => {
-        const resp = await signin(formData['email'] as string, formData.password as string);
+export const useRegister = globalAction$(
+    async (formData, { redirect }) => {
+        const resp = await register(formData['email'] as string, formData.password as string);
         if (resp) {
-            // go to home
-            cookie.set('Authorization', resp.user.uid, { path: '/', maxAge: [7, 'days'] });
-            throw redirect(301, '/');
+            // Go to login
+            throw redirect(301, '/login');
         }
 
         return {
-            success: true,
+            success: false,
             email: formData.email as string,
         };
     },
@@ -40,7 +38,7 @@ export const onGet: RequestHandler = ({ request, redirect }) => {
 };
 
 export default component$(() => {
-    const loginAction = useLogin();
+    const loginAction = useRegister();
 
     return (
         <Form action={loginAction}>
