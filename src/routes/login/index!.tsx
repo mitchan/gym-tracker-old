@@ -2,6 +2,8 @@ import { component$ } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
 import { z, zod$ } from '@builder.io/qwik-city';
 import { globalAction$, Form } from '@builder.io/qwik-city';
+import { Button } from '../../components/core/Button';
+import { InputText } from '../../components/input/InputText';
 import { comparePasswords, createJWT, getAuthCookie } from '../../lib/auth';
 import { db } from '../../lib/db';
 
@@ -47,18 +49,13 @@ export default component$(() => {
     const loginAction = useLogin();
 
     return (
-        <Form action={loginAction}>
-            <div>
-                <label>Email</label>
-                <input type="text" name="email" />
-            </div>
+        <div class="h-full w-full flex items-center justify-center bg-purple-900 text-white">
+            <Form action={loginAction} class="w-9/12">
+                <InputText name="email" label="Email" />
+                <InputText type="password" name="password" label="Password" />
 
-            <div>
-                <label>Password</label>
-                <input type="password" name="password" required />
-            </div>
-
-            <button type="submit">Submit</button>
-        </Form>
+                <Button label="Login" type="submit" />
+            </Form>
+        </div>
     );
 });
