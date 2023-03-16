@@ -16,4 +16,31 @@ model User {
   updatedAt DateTime @updatedAt
   email     String   @unique
   password  String
+
+  trainings Training[]
+}
+
+model Training {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  lastOpenAt DateTime @updatedAt
+  title      String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  exercises Exercise[]
+}
+
+model Exercise {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  serie     String
+  recovery  String
+
+  trainingId String
+  training   Training @relation(fields: [trainingId], references: [id])
 }
