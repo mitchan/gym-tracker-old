@@ -2,7 +2,7 @@ import { component$ } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
 import { z, zod$ } from '@builder.io/qwik-city';
 import { globalAction$, Form } from '@builder.io/qwik-city';
-import { comparePasswords, createJWT } from '../../lib/auth';
+import { comparePasswords, createJWT, getAuthCookie } from '../../lib/auth';
 import { db } from '../../lib/db';
 
 export const useLogin = globalAction$(
@@ -20,7 +20,7 @@ export const useLogin = globalAction$(
                 const jwt = await createJWT(user);
 
                 // go to home
-                cookie.set('Authorization', jwt, { path: '/', maxAge: [7, 'days'] });
+                cookie.set(getAuthCookie(), jwt, { path: '/', maxAge: [7, 'days'] });
                 throw redirect(301, '/');
             }
         }
@@ -37,7 +37,7 @@ export const useLogin = globalAction$(
 );
 
 export const onGet: RequestHandler = ({ redirect, cookie }) => {
-    if (cookie.get(process.env.AUTH_COOKIE ?? '')) {
+    if (cookie.get(getAuthCookie())) {
         // already logged in, redirect to home
         throw redirect(301, '/');
     }

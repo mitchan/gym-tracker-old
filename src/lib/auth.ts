@@ -30,11 +30,7 @@ async function validateJWT(jwt: string): Promise<unknown> {
 
 export async function getUserFromCookie(cookies: Cookie): Promise<User | null> {
     try {
-        if (!process.env.AUTH_COOKIE) {
-            return null;
-        }
-
-        const jwt = cookies.get(process.env.AUTH_COOKIE);
+        const jwt = cookies.get(getAuthCookie());
         if (!jwt) {
             return null;
         }
@@ -54,3 +50,11 @@ export async function getUserFromCookie(cookies: Cookie): Promise<User | null> {
         return null;
     }
 }
+
+export const getAuthCookie = () => {
+    if (process.env.AUTH_COOKIE) {
+        return process.env.AUTH_COOKIE;
+    }
+
+    throw new Error(`Env variable 'process.env.AUTH_COOKIE' not set`);
+};
