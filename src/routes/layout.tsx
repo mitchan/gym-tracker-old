@@ -1,30 +1,27 @@
-import { component$, Slot } from '@builder.io/qwik';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { component$, Slot } from "@builder.io/qwik";
+import type { RequestHandler } from "@builder.io/qwik-city";
+import { parse } from "cookie";
 
-import Header from '../components/header/header';
+export const onGet: RequestHandler = ({ request, redirect }) => {
+  const cookies = request.headers.get("cookie");
+  if (!cookies) {
+    // not logged in
+    throw redirect(301, "/login/");
+  }
+  const parsedCookies = parse(cookies);
 
-export const useServerTimeLoader = routeLoader$(() => {
-  return {
-    date: new Date().toISOString(),
-  };
-});
+  if (!parsedCookies["Authorization"]) {
+    // not logged in
+    throw redirect(301, "/login/");
+  }
+
+  // TODO validate cookie
+};
 
 export default component$(() => {
-  const serverTime = useServerTimeLoader();
   return (
     <>
-      <main>
-        <Header />
-        <section>
-          <Slot />
-        </section>
-      </main>
-      <footer>
-        <a href="https://www.builder.io/" target="_blank">
-          Made with ♡ by Builder.io
-          <div>{serverTime.value.date}</div>
-        </a>
-      </footer>
+      <Slot />
     </>
   );
 });
