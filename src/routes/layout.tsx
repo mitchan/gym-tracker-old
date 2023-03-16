@@ -15,8 +15,8 @@ export const onGet: RequestHandler = async ({ redirect, cookie }) => {
 
 export default component$(() => {
     return (
-        <>
+        <div class="h-full w-full bg-purple-900 text-white p-5">
             <Slot />
-        </>
+        </div>
     );
 });

@@ -49,12 +49,12 @@ export default component$(() => {
     const loginAction = useLogin();
 
     return (
-        <div class="h-full w-full flex items-center justify-center bg-purple-900 text-white">
-            <Form action={loginAction} class="w-9/12">
-                <InputText name="email" label="Email" />
-                <InputText type="password" name="password" label="Password" />
+        <div class="h-full w-full flex items-center justify-center bg-purple-900 text-white px-5">
+            <Form action={loginAction} class="w-full">
+                <InputText name="email" label="Email" disabled={loginAction.isRunning} />
+                <InputText type="password" name="password" label="Password" disabled={loginAction.isRunning} />
 
-                <Button label="Login" type="submit" />
+                <Button label="Login" type="submit" disabled={loginAction.isRunning} />
             </Form>
         </div>
     );
