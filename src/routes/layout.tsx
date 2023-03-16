@@ -1,21 +1,16 @@
 import { component$, Slot } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
-import { parse } from 'cookie';
+import { getUserFromCookie } from '../lib/auth';
 
-export const onGet: RequestHandler = ({ request, redirect }) => {
-    const cookies = request.headers.get('cookie');
-    if (!cookies) {
+export const onGet: RequestHandler = async ({ redirect, cookie }) => {
+    const user = await getUserFromCookie(cookie);
+    if (!user) {
+        // for precaution, remove cookie
+        cookie.delete(process.env.AUTH_COOKIE ?? '');
+
         // not logged in
         throw redirect(301, '/login/');
     }
-    const parsedCookies = parse(cookies);
-
-    if (!parsedCookies['Authorization']) {
-        // not logged in
-        throw redirect(301, '/login/');
-    }
-
-    // TODO validate cookie
 };
 
 export default component$(() => {

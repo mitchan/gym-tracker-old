@@ -2,20 +2,31 @@ import { component$ } from '@builder.io/qwik';
 import type { RequestHandler } from '@builder.io/qwik-city';
 import { z, zod$ } from '@builder.io/qwik-city';
 import { globalAction$, Form } from '@builder.io/qwik-city';
-import { parse } from 'cookie';
-import { signin } from '../../lib/auth/firebase';
+import { comparePasswords, createJWT } from '../../lib/auth';
+import { db } from '../../lib/db';
 
 export const useLogin = globalAction$(
     async (formData, { redirect, cookie }) => {
-        const resp = await signin(formData['email'] as string, formData.password as string);
-        if (resp) {
-            // go to home
-            cookie.set('Authorization', resp.user.uid, { path: '/', maxAge: [7, 'days'] });
-            throw redirect(301, '/');
+        // check if user exists
+        const user = await db.user.findUnique({
+            where: {
+                email: formData.email,
+            },
+        });
+        if (user) {
+            // validate password
+            const isCorrectPassword = await comparePasswords(formData.password, user.password);
+            if (isCorrectPassword) {
+                const jwt = await createJWT(user);
+
+                // go to home
+                cookie.set('Authorization', jwt, { path: '/', maxAge: [7, 'days'] });
+                throw redirect(301, '/');
+            }
         }
 
         return {
-            success: true,
+            success: false,
             email: formData.email as string,
         };
     },
@@ -25,15 +36,8 @@ export const useLogin = globalAction$(
     }),
 );
 
-export const onGet: RequestHandler = ({ request, redirect }) => {
-    const cookies = request.headers.get('cookie');
-    if (!cookies) {
-        // do nothing
-        return;
-    }
-    const parsedCookies = parse(cookies);
-
-    if (parsedCookies['Authorization']) {
+export const onGet: RequestHandler = ({ redirect, cookie }) => {
+    if (cookie.get(process.env.AUTH_COOKIE ?? '')) {
         // already logged in, redirect to home
         throw redirect(301, '/');
     }
