@@ -1,4 +1,4 @@
-import { $, component$ } from '@builder.io/qwik';
+import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
@@ -29,29 +29,38 @@ export default component$(() => {
     const trainingSignal = useGetTrainings();
     const nav = useNavigate();
 
-    const handleCreate = $(() => {
-        nav('/training/create/');
-    });
-
     return (
         <>
-            <h1 class="text-4xl">Trainings</h1>
+            <h1 class="text-4xl">Schede</h1>
+
+            <div class="mb-2">
+                <Button
+                    label="Crea nuova scheda"
+                    onClick$={() => {
+                        nav('/training/create/');
+                    }}
+                />
+                <Button
+                    label="Esercizi"
+                    onClick$={() => {
+                        nav('/exercices/');
+                    }}
+                />
+            </div>
 
             {trainingSignal.value.map((training) => (
-                <div>{training.title}</div>
+                <div key={training.id}>{training.title}</div>
             ))}
-
-            <Button label="Create new training" onClick={handleCreate} />
         </>
     );
 });
 
 export const head: DocumentHead = {
-    title: 'Trainings',
+    title: 'Schede',
     meta: [
         {
             name: 'description',
-            content: 'Trainings',
+            content: 'Schede',
         },
     ],
 };

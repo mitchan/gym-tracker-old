@@ -18,6 +18,7 @@ model User {
   password  String
 
   trainings Training[]
+  exercices Exercise[]
 }
 
 model Training {
@@ -30,17 +31,32 @@ model Training {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  exercises Exercise[]
+  exercises ExercicesOnTraining[]
 }
 
 model Exercise {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
-  serie     String
-  recovery  String
 
-  trainingId String
+  name     String
+  serie    String
+  recovery String
+  notes    String?
+  weight   Int
+
+  trainings ExercicesOnTraining[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model ExercicesOnTraining {
   training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String
+
+  exercice   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+
+  @@id([trainingId, exerciseId])
 }

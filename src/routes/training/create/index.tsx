@@ -32,6 +32,7 @@ export const useCreateTraining = globalAction$(
             data: {
                 title,
                 userId: user.id,
+                lastOpenAt: new Date(),
             },
         });
 
