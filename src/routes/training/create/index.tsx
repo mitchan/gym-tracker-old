@@ -19,6 +19,7 @@ export const useCreateTraining = globalAction$(
             where: {
                 title,
                 userId: user.id,
+                lastOpenAt: new Date(),
             },
         });
         if (training) {
