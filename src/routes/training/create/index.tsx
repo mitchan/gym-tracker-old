@@ -19,7 +19,6 @@ export const useCreateTraining = globalAction$(
             where: {
                 title,
                 userId: user.id,
-                lastOpenAt: new Date(),
             },
         });
         if (training) {
@@ -33,6 +32,7 @@ export const useCreateTraining = globalAction$(
             data: {
                 title,
                 userId: user.id,
+                lastOpenAt: new Date(),
             },
         });
 

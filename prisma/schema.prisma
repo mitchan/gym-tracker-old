@@ -38,9 +38,12 @@ model Exercise {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
-  serie     String
-  recovery  String
+
+  name     String
+  serie    String
+  recovery String
+  notes    String?
+  weight   Int
 
   trainings ExercicesOnTraining[]
 
