@@ -4,6 +4,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import type { Exercise } from '@prisma/client';
 import { Button } from '../../components/core/Button';
+import ExerciseCard from '../../components/exercise/ExerciseCard';
 import { getUserFromCookie } from '../../lib/auth';
 import { db } from '../../lib/db';
 
@@ -18,6 +19,9 @@ export const useGetExercices = routeLoader$(async (event): Promise<Exercise[]> =
     return db.exercise.findMany({
         where: {
             user,
+        },
+        orderBy: {
+            name: 'asc',
         },
     });
 });
@@ -37,9 +41,11 @@ export default component$(() => {
                 }}
             />
 
-            {exercices.value.map((exercise) => (
-                <div key={exercise.id}>{exercise.name}</div>
-            ))}
+            <div class="my-2">
+                {exercices.value.map((exercise) => (
+                    <ExerciseCard key={exercise.id} exercise={exercise} />
+                ))}
+            </div>
         </>
     );
 });
