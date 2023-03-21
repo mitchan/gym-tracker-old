@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 
 type InputTextProps = {
-    type?: 'text' | 'password' | 'number';
+    type?: 'text' | 'password' | 'number' | 'hidden';
     label: string;
     name: string;
     value?: string | number;
@@ -13,7 +13,7 @@ export const InputText = component$<InputTextProps>((props) => {
 
     return (
         <div class="flex flex-col mb-1">
-            <label>{label}</label>
+            {type !== 'hidden' && <label>{label}</label>}
             <input
                 type={type}
                 name={name}
